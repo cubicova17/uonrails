@@ -1,0 +1,2 @@
+serviceClass: com.uaonrails.mining.client.GreetingService
+path: 705E5C54E443FC4F9CB0857ACE814DD9.gwt.rpc
