@@ -67,7 +67,7 @@ public class UZParser extends HttpServlet {
 
 		String SendReqtoUZ( String groupname)
 	{
-		String output=new String("1");
+		String output=new String("2");
 		URL url;
 		try {
 			//System.out.println(groupname);
