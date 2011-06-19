@@ -90,9 +90,9 @@ public class UZParser extends HttpServlet {
 			
 			connection.setRequestProperty( "Connection", "keep-alive" );
 			connection.setRequestProperty( "Referer", "http://uz.gov.ua/index.php?m=info.info_posagiriv.cini_nayavnist&f=ScheduleOra.Place&lng=uk" );
-			
+			//hello
 			connection.setRequestProperty( "Cookie","b=b");
-			
+			int i=0;
 			
 			
 			String rawData = groupname;
