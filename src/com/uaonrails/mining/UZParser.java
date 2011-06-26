@@ -32,7 +32,7 @@ import com.google.appengine.api.datastore.Entity;
 import java.util.*;
 
 import javax.servlet.http.*;
-
+//mafack 26/06
 @SuppressWarnings("serial")
 public class UZParser extends HttpServlet {
 		public void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -67,7 +67,7 @@ public class UZParser extends HttpServlet {
 
 		String SendReqtoUZ( String groupname)
 	{
-		String output=new String("2");
+		String output=new String("");
 		URL url;
 		try {
 			//System.out.println(groupname);
