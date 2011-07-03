@@ -1,5 +1,6 @@
 package com.uaonrails.mining;
 
+//Fucka done
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -32,7 +33,7 @@ import com.google.appengine.api.datastore.Entity;
 import java.util.*;
 
 import javax.servlet.http.*;
-//mafack 26/06
+/
 @SuppressWarnings("serial")
 public class UZParser extends HttpServlet {
 		public void doGet(HttpServletRequest req, HttpServletResponse resp)
