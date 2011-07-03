@@ -1,6 +1,6 @@
 package com.uaonrails.mining;
 
-//Fucka done
+//Empty all
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
