@@ -1,2 +1,3 @@
 # Module uaonrails
 # RPC service class, partial path of RPC policy file
+com.uaonrails.mining.client.GreetingService, 705E5C54E443FC4F9CB0857ACE814DD9.gwt.rpc
