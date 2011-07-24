@@ -3,6 +3,7 @@ package com.uaonrails.mining;
 
 //
 import com.uaonrails.mining.support.*;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -33,8 +34,12 @@ import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.KeyFactory;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Logger;
 
 import javax.servlet.http.*;
 
@@ -43,7 +48,8 @@ import org.htmlcleaner.TagNode;
 
 @SuppressWarnings("serial")
 public class UZParser extends HttpServlet {
-		public void doGet(HttpServletRequest req, HttpServletResponse resp)
+	
+	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 			doPost(req,resp);
 	        
@@ -148,36 +154,7 @@ public class UZParser extends HttpServlet {
 			connection.setReadTimeout(100000);
 			SetReqProp(connection,false, null);
 			
-			//CookiesInJava cm =  new CookiesInJava();
-			//cm.readCookies(connection, true,false);
-			
-			//cm.writeCookies(connection,true);
-			//connection.;
-			//SetReqProp(connection, true, cm);
-			
-			
-			//String rawData = train_id;
-			/*OutputStreamWriter out = new OutputStreamWriter(
-		                              connection.getOutputStream(),"UTF-8");
-			out.write("dst	22218000");
-			out.write("dt	2011-07-22");
-			out.write("ps	privat_card");
-			out.write("src	22200001");
-			out.write("transport_type	2");*/
-			//kstotpr=2200001&&&time_from=		
-			/*out.write("kstotpr=2200001");
-			out.write("kstprib=2200600");
-			out.write("sdate=1808");
-			out.write("time_from=");
-			//out.write(rawData);
-			out.flush();*/
-			/*dst	22218000
-			dt	2011-07-22
-			ps	privat_card
-			src	22200001
-			transport_type	2*/
-			
-			//Out HTML
+
 			BufferedReader in = new BufferedReader(
 					new InputStreamReader(
 					connection.getInputStream(),"UTF-8"));
@@ -272,15 +249,18 @@ public class UZParser extends HttpServlet {
 		}
 		writer.flush();
 		}
-		 public void parseTrains(InputStream is,PrintWriter os) throws IOException
+		 public ArrayList<UZTrain> parseTrains(InputStream is,PrintWriter os) throws IOException
 		 {
 			
 			 
 			HtmlCleaner cleaner = new HtmlCleaner();
 				 // final String siteUrl = file_name;
-				   UZTrainsParser uzp= new UZTrainsParser();
+				  UZTrainsParser uzp= new UZTrainsParser();
 				  TagNode node = cleaner.clean(is);
 				  uzp.parseRows(node);
+				  
+				 
+				  
 				  for(UZTrain tmp:uzp.trains)
 				  {
 					  
@@ -292,25 +272,75 @@ public class UZParser extends HttpServlet {
 				  }
 		
 
-
+				  return (ArrayList<UZTrain>) uzp.trains;
 		 }
 		public void doPost(HttpServletRequest req, HttpServletResponse resp)
 		throws IOException {
-			resp.setCharacterEncoding("Windows-1251");
+			resp.setCharacterEncoding("UTF-8");
 			resp.setContentType("text/html");
 			String when_ = (String)req.getParameter("when");
 			String from_ = (String)req.getParameter("from");
 			String to_ = (String)req.getParameter("to");
+			Logger.getLogger(UZParser.class.getName()).info("Started");
+			DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
 			
 			String res = null;
-			if(when_!=null && from_!=null&& to_!=null)
+			for(int i=34; i<35;i++)
 			{
+
+				from_="22200001";
+				to_="22210001";
+				//DateFormat formatter ; 
+				//   formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+				Date cur_date = new Date();
+				Calendar c1 = Calendar.getInstance(); 
+				c1.setTime(cur_date);
+				c1.add(Calendar.DATE, i);
+									
+				when_=sdf.format(c1.getTime());
+
+				
+//			if(when_!=null && from_!=null&& to_!=null)
+			
 			 res = 			SendReqtoPZ(when_,from_,to_);
 			
 			//resp.getWriter().println(res);//"015%C2%EC%EE%F1%EA%E2%E0+%EA%E8%E2-%EA%EE%F8%E8%F6%E5++++"));
 			 
-			parseTrains(new ByteArrayInputStream(res.getBytes()),resp.getWriter());
-			}
+			ArrayList<UZTrain> trains = parseTrains(new ByteArrayInputStream(res.getBytes()),resp.getWriter());
+			
+			UZCortege cortage = new UZCortege(trains);
+			cortage.parseDate(when_);
+			cortage.from_ = from_;
+			cortage.to_ = to_;
+			//resp.getWriter().println(trains.size()+"\n");
+		      
+			    
+		      for(UZTrain tmp: cortage.trains)
+		      {
+		      //Key cortageKey = KeyFactory.createKey("transportKey", );
+
+		      Entity aviab_train =new Entity("transport_profile");
+		        
+		      byte [] asciiBytes = tmp.name.getBytes("US-ASCII");
+		        aviab_train.setProperty("name", new String(asciiBytes));
+		        aviab_train.setProperty("arr_str", tmp.arr_str);
+		        aviab_train.setProperty("dep_str", tmp.dep_str);
+		        aviab_train.setProperty("kupe", tmp.kupe);
+		        aviab_train.setProperty("platzkart", tmp.platzkart);
+		        aviab_train.setProperty("cur_date", cortage.cur_date);
+		        aviab_train.setProperty("for_date", cortage.act_date);
+		        aviab_train.setProperty("from", cortage.from_);
+		        aviab_train.setProperty("to", cortage.to_);
+		        //file_.setProperty("id", url);
+		        ds.put(aviab_train);
+		      } 
+		      //resp.getWriter().println("Iteration = "+ i);
+			
+			
+		}//for
 			resp.setContentType("text/html");
 			    PrintWriter out = resp.getWriter();
 			    			    out.println("<HTML><BODY BGCOLOR=\"#FDF5E6\">\n" +
@@ -333,7 +363,7 @@ public class UZParser extends HttpServlet {
 			    out.println("</TABLE>\n");
 			    
 			    out.println("<form name=\"input\" action=\"UZParser\" method=\"POST\">");
-			    out.println("Ented date in format 2011-07-25: <input type=\"text\" name=\"when\" />");
+			    out.println("Ented date in format 2011-07-25: <input type=\"text\" name=\"when\" value = \"2011-07-25\"/>");
 			    
 		
 			    out.println("<select name=\"from\">");

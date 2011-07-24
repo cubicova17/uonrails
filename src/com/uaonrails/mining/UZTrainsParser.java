@@ -1,6 +1,9 @@
 package com.uaonrails.mining;
 import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.htmlcleaner.CommentNode;
@@ -10,10 +13,13 @@ import org.htmlcleaner.TagNodeVisitor;
 
 import com.uaonrails.mining.support.UZTrain;
 
+import java.util.logging.Logger;
 
 public  class UZTrainsParser {
+	   private static final Logger log = Logger.getLogger(UZParser.class.getName());
+
 	public List<UZTrain> trains;
-	static int num_row=0;
+	int num_row=0;
 	
 	public UZTrainsParser() {
 		// TODO Auto-generated constructor stub
@@ -51,8 +57,15 @@ public  class UZTrainsParser {
 		                		  //System.out.println("OOH!");
 		                		  //System.out.println(Labelname);
 		                		  UZTrain traine = new UZTrain(); 
-		                		  traine.name =tag.getText().substring(0,ind1-2);
+		                		  traine.name =new String(tag.getText().toString().getBytes(),"US-ASCII").substring(0,ind1-2);
+		               	       System.out.println("!!!" + traine.name);
+		                		  log.info(traine.name);
+	                	        log.warning(new String(tag.getText().toString().getBytes(),"UTF-8").substring(0,ind1-2));
+	                	        log.severe(traine.name.getBytes().toString());
+
 		                		  traine.dep_str =readDate(tag.getText().toString(),ind1);
+          		
+		                		  
 		                		  traine.arr_str =readDate(tag.getText().toString(),ind3);
 		                		  
 		                		  parse1Row(tag,"c_1030",traine);
@@ -61,7 +74,7 @@ public  class UZTrainsParser {
 		                		  parse1Row(tag,"c_1040",traine);
 		                		  trains.add(traine);
 		                	  }
-		                	  } catch (UnsupportedEncodingException e) {
+		                	  } catch (Exception e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}

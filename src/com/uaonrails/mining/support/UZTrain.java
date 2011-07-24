@@ -1,5 +1,7 @@
 package com.uaonrails.mining.support;
 
+import java.util.Date;
+
 public class UZTrain {
 	public String name;
 	public int kupe;

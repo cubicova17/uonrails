@@ -1,0 +1,9 @@
+<backends>
+<backend name="grabber">
+<class>B1</class>
+<options>
+<dynamic>true</dynamic>
+<public>true</public>
+</options>
+</backend>
+</backends>
