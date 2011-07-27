@@ -43,8 +43,10 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.*;
 
+import org.htmlcleaner.CleanerProperties;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.TagNode;
+import org.mortbay.log.Log;
 
 @SuppressWarnings("serial")
 public class UZParser extends HttpServlet {
@@ -249,14 +251,26 @@ public class UZParser extends HttpServlet {
 		}
 		writer.flush();
 		}
-		 public ArrayList<UZTrain> parseTrains(InputStream is,PrintWriter os) throws IOException
+		
+		public ArrayList<UZTrain> parseTrains(InputStream is,PrintWriter os) throws IOException
 		 {
 			
-			 
+			 CleanerProperties cp= new CleanerProperties();
+			
+			//cp.setRecognizeUnicodeChars(true);
+			
 			HtmlCleaner cleaner = new HtmlCleaner();
 				 // final String siteUrl = file_name;
 				  UZTrainsParser uzp= new UZTrainsParser();
-				  TagNode node = cleaner.clean(is);
+				  TagNode node = cleaner.clean(is,"UTF-8");
+				  //byte bts[] = new byte [1000];
+				  
+				  //is.reset();
+				  //is.read(bts);
+				  //Logger.getLogger(UZParser.class.getName()).info(node.toString());
+				  //Logger.getLogger(UZParser.class.getName()).info(node.getText().toString());
+				  //is.reset();*/
+				  
 				  uzp.parseRows(node);
 				  
 				 
@@ -274,8 +288,12 @@ public class UZParser extends HttpServlet {
 
 				  return (ArrayList<UZTrain>) uzp.trains;
 		 }
+		
 		public void doPost(HttpServletRequest req, HttpServletResponse resp)
 		throws IOException {
+			//Logger.getLogger(UZParser.class.getName()).info(System.getProperty("file.encoding"));
+			System.setProperty("file.encoding", "UTF-8");
+			//Logger.getLogger(UZParser.class.getName()).info(System.getProperty("file.encoding"));
 			resp.setCharacterEncoding("UTF-8");
 			resp.setContentType("text/html");
 			String when_ = (String)req.getParameter("when");
@@ -302,14 +320,14 @@ public class UZParser extends HttpServlet {
 									
 				when_=sdf.format(c1.getTime());
 
-				
+				//US-ASCII
 //			if(when_!=null && from_!=null&& to_!=null)
 			
 			 res = 			SendReqtoPZ(when_,from_,to_);
-			
+			 //Logger.getLogger(UZParser.class.getName()).info(res);
 			//resp.getWriter().println(res);//"015%C2%EC%EE%F1%EA%E2%E0+%EA%E8%E2-%EA%EE%F8%E8%F6%E5++++"));
 			 
-			ArrayList<UZTrain> trains = parseTrains(new ByteArrayInputStream(res.getBytes()),resp.getWriter());
+			ArrayList<UZTrain> trains = parseTrains(new ByteArrayInputStream(res.getBytes("UTF-8")),resp.getWriter());
 			
 			UZCortege cortage = new UZCortege(trains);
 			cortage.parseDate(when_);
@@ -324,8 +342,8 @@ public class UZParser extends HttpServlet {
 
 		      Entity aviab_train =new Entity("transport_profile");
 		        
-		      byte [] asciiBytes = tmp.name.getBytes("US-ASCII");
-		        aviab_train.setProperty("name", new String(asciiBytes));
+	
+		        aviab_train.setProperty("name", tmp.name);
 		        aviab_train.setProperty("arr_str", tmp.arr_str);
 		        aviab_train.setProperty("dep_str", tmp.dep_str);
 		        aviab_train.setProperty("kupe", tmp.kupe);
@@ -342,7 +360,7 @@ public class UZParser extends HttpServlet {
 			
 		}//for
 			resp.setContentType("text/html");
-			    PrintWriter out = resp.getWriter();
+	/*		    PrintWriter out = resp.getWriter();
 			    			    out.println("<HTML><BODY BGCOLOR=\"#FDF5E6\">\n" +
 			                "<H1 ALIGN=CENTER>equ</H1>\n" +
 			                "<B>Request Method: </B>" +
@@ -381,7 +399,7 @@ public class UZParser extends HttpServlet {
 			    out.println("</select>");
 			    out.println("<input type=\"submit\" value=\"Submit\" />");
 			    out.println("</form>"); 
-			    out.println("</BODY></HTML>");
+			    out.println("</BODY></HTML>");*/
 			    
 		}
 		public void doPost23(HttpServletRequest req, HttpServletResponse resp)

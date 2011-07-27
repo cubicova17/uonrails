@@ -4,6 +4,6 @@
 <url>/UZParser</url>
 <target>grabber</target>
 <description>Grabb all trains</description>
-<schedule>every 4 hours</schedule>
+<schedule>every 12 hours</schedule>
 </cron>
 </cronentries>

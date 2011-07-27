@@ -14,19 +14,28 @@
   	<servlet-name>UZParser</servlet-name>
   	<servlet-class>com.uaonrails.mining.UZParser</servlet-class>
   </servlet>
-    <servlet>
+  <servlet>
   	<servlet-name>UZDelete</servlet-name>
   	<servlet-class>com.uaonrails.mining.UZGrabber</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>UZBurndown</servlet-name>
+  	<servlet-class>com.uaonrails.mining.UZBurndown</servlet-class>
   </servlet>
 
   <servlet-mapping>
     <servlet-name>greetServlet</servlet-name>
     <url-pattern>/uaonrails/greet</url-pattern>
-    
   </servlet-mapping>
-    <servlet-mapping>
+  
+  <servlet-mapping>
     <servlet-name>UZDelete</servlet-name>
-    <url-pattern>/UZDelete</url-pattern>
+    <url-pattern>/DeleteAll</url-pattern>
+  </servlet-mapping>
+  
+   <servlet-mapping>
+    <servlet-name>UZBurndown</servlet-name>
+    <url-pattern>/UZBurndown</url-pattern>
   </servlet-mapping>
   
   <!-- Default page to serve --><servlet-mapping>

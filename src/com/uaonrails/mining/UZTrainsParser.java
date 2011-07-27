@@ -37,7 +37,8 @@ public  class UZTrainsParser {
 		      public boolean visit(TagNode tagNode, HtmlNode htmlNode) {
 		    	
 		          if (htmlNode instanceof TagNode) {
-		              TagNode tag = (TagNode) htmlNode;
+		           
+		        	  TagNode tag = (TagNode) htmlNode;
 		              String tagName = tag.getName();
 		              if ("tr".equals(tagName)) {
 		                  String src = tag.getAttributeByName("id");
@@ -45,23 +46,26 @@ public  class UZTrainsParser {
 		                  if (src != null&&src.equals(("row_"+num_row))  ) {
 
 		                	  try {
-		                		  String Labelname = new String(tag.getText().toString().getBytes(),"UTF-8");
+		                		  String Labelname = new String(tag.getText().toString());
 		                		 // System.out.println(tag.getText());
 		                	  //
 		                		  int ind1 = tag.getText().indexOf(":");
 		                		  int ind2 = tag.getText().indexOf(":",ind1);
 		                		  int ind3 = tag.getText().indexOf(":",ind2);
-		                		  
-		                		  if(Labelname.indexOf(new String("Осталось свободных мест: ".getBytes(),"UTF-8")) != -1)
+		                		  //log.info(new String("Осталось свободных мест: "));
+		                		  //log.info(Labelname);
+		                		  if(Labelname.indexOf(new String("Осталось свободных мест: ")) != -1)
 		                	  {
 		                		  //System.out.println("OOH!");
 		                		  //System.out.println(Labelname);
 		                		  UZTrain traine = new UZTrain(); 
-		                		  traine.name =new String(tag.getText().toString().getBytes(),"US-ASCII").substring(0,ind1-2);
-		               	       System.out.println("!!!" + traine.name);
-		                		  log.info(traine.name);
-	                	        log.warning(new String(tag.getText().toString().getBytes(),"UTF-8").substring(0,ind1-2));
-	                	        log.severe(traine.name.getBytes().toString());
+		                		  traine.name =new String(tag.getText().toString()).substring(0,ind1-2);
+		               	       //System.out.println("!!!" + traine.name);
+		                		log.info(traine.name);
+	                	        //log.info(new String(tag.getText().toString().getBytes(),"UTF-8").substring(0,ind1-2));
+	                	        //for(int ooo=0;ooo<traine.name.getBytes().length;ooo++	) 
+	                	        //log.info(Byte.toString(tag.getText().toString().getBytes()[ooo]));
+	                	        
 
 		                		  traine.dep_str =readDate(tag.getText().toString(),ind1);
           		

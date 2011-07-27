@@ -1,2 +1,4 @@
 # Module uaonrails
 # RPC service class, partial path of RPC policy file
+com.uaonrails.mining.client.GreetingService, 705E5C54E443FC4F9CB0857ACE814DD9.gwt.rpc
+com.google.gwt.logging.shared.RemoteLoggingService, 5894745FB9F8B9B14859C35BE7962C8B.gwt.rpc
